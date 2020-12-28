@@ -15,7 +15,7 @@ var (
 	sqlSelectJoinClause        = []byte(" JOIN ")
 	sqlSelectJoinOnClause      = []byte(" ON ")
 	sqlSelectJoinUsingClause   = []byte(" USING ")
-	sqlSelectWhereClause       = []byte(" WHERE ")
+	sqlWhereClause             = []byte(" WHERE ")
 	sqlSelectGroupByClause     = []byte(" GROUP BY ")
 	sqlSelectHavingClause      = []byte(" HAVING ")
 	sqlSelectOrderByClause     = []byte(" ORDER BY ")
@@ -248,7 +248,7 @@ func (s *SelectStatement) ToSQLFast(sb *strings.Builder, args *[]interface{}) er
 	}
 
 	if len(s.where) > 0 {
-		sb.Write(sqlSelectWhereClause)
+		sb.Write(sqlWhereClause)
 		for idx, condition := range s.where {
 			if idx > 0 {
 				sb.Write(sqlConditionAnd)

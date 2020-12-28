@@ -113,4 +113,12 @@ var _ = Describe("Insert", func() {
 		Expect(args).To(Equal([]interface{}{"Name 1", "email1@email.com", 1}))
 		Expect(sql).To(Equal("INSERT INTO users (name, email) VALUES (?,?) ON DUPLICATE KEY UPDATE tries = tries + ?"))
 	})
+
+	It("should generate a single INSERT INTO with placeholders", func() {
+		insert := new(sqlf.InsertStatement)
+		sql, args, err := insert.Placeholder(sqlf.Dollar).Into("users", "name", "email").Values("Name 1", "email1@email.com").ToSQL()
+		Expect(err).NotTo(HaveOccurred())
+		Expect(args).To(Equal([]interface{}{"Name 1", "email1@email.com"}))
+		Expect(sql).To(Equal("INSERT INTO users (name, email) VALUES ($1,$2)"))
+	})
 })

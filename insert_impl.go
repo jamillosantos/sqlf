@@ -127,6 +127,13 @@ func (insert *InsertStatement) ToSQL() (string, []interface{}, error) {
 	if err != nil {
 		return "", nil, err
 	}
+	if insert.placeholderFormat != nil {
+		sql, err := insert.placeholderFormat.Replace(sb.String())
+		if err != nil {
+			return "", nil, err
+		}
+		return sql, args, nil
+	}
 	return sb.String(), args, nil
 }
 

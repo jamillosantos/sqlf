@@ -5,4 +5,5 @@ type Builder interface {
 	Placeholder(format PlaceholderFormat) Builder
 	Select(fields ...string) Select
 	Insert(tableName string, fields ...interface{}) Insert
+	Delete(tableName string) Delete
 }

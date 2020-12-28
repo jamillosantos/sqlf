@@ -27,3 +27,10 @@ func (b *builder) Insert(into string, fields ...interface{}) Insert {
 		fields:            fields,
 	}
 }
+
+func (b *builder) Delete(tableName string) Delete {
+	return &DeleteStatement{
+		placeholderFormat: b.placeholder,
+		from:              tableName,
+	}
+}
