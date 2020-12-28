@@ -5,6 +5,11 @@ import (
 	"strings"
 )
 
+// Placeholders returns a sequence of "?" separated by comma.
+func Placeholders(count int) string {
+	return strings.Repeat(",?", count)[1:]
+}
+
 // PlaceholderFormat enables the system to use different placeholder formats.
 type PlaceholderFormat interface {
 	Replace(sql string) (string, error)
