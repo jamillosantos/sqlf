@@ -1,10 +1,5 @@
 package sqlf
 
-// PlaceholderFormat enables the system to use different placeholder formats.
-type PlaceholderFormat interface {
-	Replace(sql string) (string, error)
-}
-
 // Join represents a SQL Join.
 type Join interface {
 	Sqlizer
@@ -18,8 +13,11 @@ type Join interface {
 	// As define the table alias.
 	As(name string) Join
 
-	// On define the on criteria.
-	On(criteria ...Sqlizer) Select
+	// On define the on criteria based on a condition.
+	On(condition string, params ...interface{}) Select
+
+	// OnClause define the on criteria based on Sqlizers.
+	OnClause(criteria ...Sqlizer) Select
 
 	// Using defines the using directive.
 	Using(fields ...interface{}) Select
@@ -33,10 +31,13 @@ type GroupBy interface {
 	Fields(fields ...interface{}) GroupBy
 
 	// Having defines the SQL HAVING clause.
-	Having(criteria ...Sqlizer) Select
+	Having(condition string, params ...interface{}) Select
+
+	// Having defines the SQL HAVING clause.
+	HavingClause(criteria ...Sqlizer) Select
 
 	// Query returns the Query that created this instance.
-	Query() Select
+	Select() Select
 }
 
 // OrderBy represents a SQL GROUP BY clause.
@@ -50,7 +51,7 @@ type OrderBy interface {
 	Desc(fields ...interface{}) OrderBy
 
 	// Query returns the Query that created this instance.
-	Query() Select
+	Select() Select
 }
 
 // Select represents a SQL SELECT statement.
@@ -73,37 +74,43 @@ type Select interface {
 	As(tableAlias string) Select
 
 	// JoinClause adds a JOIN to the select.
-	JoinClause(joinType string, table string) Join
+	JoinClause(joinType string, tableName ...string) Join
 
 	// InnerJoin adds a INNER JOIN to the select.
-	InnerJoin(table string) Join
+	InnerJoin(tableName ...string) Join
 
 	// OuterJoin adds a OUTER JOIN to the select.
-	OuterJoin(table string) Join
+	OuterJoin(tableName ...string) Join
 
 	// LeftJoin adds a LEFT JOIN to the select.
-	LeftJoin(table string) Join
+	LeftJoin(tableName ...string) Join
 
 	// RightJoin adds a LEFT JOIN to the select.
-	RightJoin(table string) Join
+	RightJoin(tableName ...string) Join
 
-	// Where adds a criteria for the
-	Where(criteria ...Sqlizer) Select
+	// Where adds a criteria for the select.
+	Where(condition string, args ...interface{}) Select
+
+	// WhereCriteria adds a criteria for the select.
+	WhereCriteria(criteria ...Sqlizer) Select
 
 	// GroupBy adds a SQL GROUP BY clause and returns the Query itself. For more options (like HAVING) use `GroupByX`.
-	GroupBy() Select
+	GroupBy(fields ...interface{}) Select
 
 	// GroupByX adds a SQL GROUP BY clause and returns the GroupBy itself for further configuration.
-	GroupByX() GroupBy
+	GroupByX(fields ...interface{}) GroupBy
 
 	// OrderBy adds a SQL GROUP BY clause and returns the Query itself. For more options (like HAVING) use `OrderByX`.
-	OrderBy(fields ...interface{}) OrderBy
+	OrderBy(fields ...interface{}) Select
 
 	// OrderByX adds a SQL GROUP BY clause and returns the OrderBy itself for further configuration.
 	OrderByX() OrderBy
 
 	// Limit defines the SQL LIMIT clause.
 	Limit(limits ...interface{}) Select
+
+	// Offset defines the SQL OFFSET clause.
+	Offset(offset interface{}) Select
 
 	// Placeholder defines what placeholder format is going to be used for this query.
 	//

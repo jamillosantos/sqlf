@@ -1,3 +1,10 @@
 module github.com/setare/sqlf
 
 go 1.15
+
+require (
+	github.com/Masterminds/squirrel v1.5.0
+	github.com/novln/macchiato v1.0.2
+	github.com/onsi/ginkgo v1.14.2
+	github.com/onsi/gomega v1.10.4
+)
