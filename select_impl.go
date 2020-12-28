@@ -141,39 +141,33 @@ func (s *SelectStatement) GroupBy(fields ...interface{}) Select {
 	}
 	s.groupBy = &GroupByClause{
 		fields: fields,
-		parent: s,
 	}
 	return s
 }
 
 // GroupByX adds a SQL GROUP BY clause and returns the GroupBy itself for further configuration.
-func (s *SelectStatement) GroupByX(fields ...interface{}) GroupBy {
-	s.groupBy = &GroupByClause{
-		fields: fields,
-		parent: s,
-	}
-	return s.groupBy
+func (s *SelectStatement) GroupByX(callback func(GroupBy)) Select {
+	s.groupBy = &GroupByClause{}
+	callback(s.groupBy)
+	return s
 }
 
 // OrderBy adds a SQL GROUP BY clause and returns the Query itself. For more options (like HAVING) use `OrderByX`.
 func (s *SelectStatement) OrderBy(fields ...interface{}) Select {
 	if s.orderBy == nil {
-		s.orderBy = &OrderByClause{
-			parent: s,
-		}
+		s.orderBy = &OrderByClause{}
 	}
 	s.orderBy.Asc(fields...)
 	return s
 }
 
 // OrderByX adds a SQL GROUP BY clause and returns the OrderBy itself for further configuration.
-func (s *SelectStatement) OrderByX() OrderBy {
+func (s *SelectStatement) OrderByX(callback func(orderBy OrderBy)) Select {
 	if s.orderBy == nil {
-		s.orderBy = &OrderByClause{
-			parent: s,
-		}
+		s.orderBy = &OrderByClause{}
 	}
-	return s.orderBy
+	callback(s.orderBy)
+	return s
 }
 
 // Limit defines the SQL LIMIT clause.

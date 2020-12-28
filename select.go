@@ -31,13 +31,10 @@ type GroupBy interface {
 	Fields(fields ...interface{}) GroupBy
 
 	// Having defines the SQL HAVING clause.
-	Having(condition string, params ...interface{}) Select
+	Having(condition string, params ...interface{}) GroupBy
 
 	// Having defines the SQL HAVING clause.
-	HavingClause(criteria ...Sqlizer) Select
-
-	// Query returns the Query that created this instance.
-	Select() Select
+	HavingClause(criteria ...Sqlizer) GroupBy
 }
 
 // OrderBy represents a SQL GROUP BY clause.
@@ -49,9 +46,6 @@ type OrderBy interface {
 
 	// Desc adds fields to the SQL ORDER BY clause on an descending order.
 	Desc(fields ...interface{}) OrderBy
-
-	// Query returns the Query that created this instance.
-	Select() Select
 }
 
 // Select represents a SQL SELECT statement.
@@ -98,13 +92,13 @@ type Select interface {
 	GroupBy(fields ...interface{}) Select
 
 	// GroupByX adds a SQL GROUP BY clause and returns the GroupBy itself for further configuration.
-	GroupByX(fields ...interface{}) GroupBy
+	GroupByX(callback func(groupBy GroupBy)) Select
 
 	// OrderBy adds a SQL GROUP BY clause and returns the Query itself. For more options (like HAVING) use `OrderByX`.
 	OrderBy(fields ...interface{}) Select
 
 	// OrderByX adds a SQL GROUP BY clause and returns the OrderBy itself for further configuration.
-	OrderByX() OrderBy
+	OrderByX(callback func(orderBy OrderBy)) Select
 
 	// Limit defines the SQL LIMIT clause.
 	Limit(limits ...interface{}) Select

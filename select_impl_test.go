@@ -254,13 +254,15 @@ var _ = Describe("Select", func() {
 		})
 
 		It("should reset GROUP BY X", func() {
-			s := new(sqlf.SelectStatement)
-			gb := s.
+			s := new(sqlf.SelectStatement).
 				Select("u.*").
 				From("users").As("u").
-				GroupByX("city")
-			Expect(gb.Select()).To(Equal(s))
-			sql, args, err := gb.Having("age >= ?", 18).ToSQL()
+				GroupByX(func(gb sqlf.GroupBy) {
+					gb.
+						Fields("city").
+						Having("age >= ?", 18)
+				})
+			sql, args, err := s.ToSQL()
 			Expect(err).ToNot(HaveOccurred())
 			Expect(args).To(ConsistOf(18))
 			Expect(sql).To(Equal("SELECT u.* FROM users AS u GROUP BY city HAVING age >= ?"))
@@ -307,12 +309,12 @@ var _ = Describe("Select", func() {
 		})
 
 		It("should generate with a ORDER BY desc", func() {
-			s := new(sqlf.SelectStatement)
-			ob := s.
+			s := new(sqlf.SelectStatement).
 				Select("u.*").
 				From("users").As("u").
-				OrderByX().Desc("city")
-			Expect(ob.Select()).To(Equal(s))
+				OrderByX(func(orderBy sqlf.OrderBy) {
+					orderBy.Desc("city")
+				})
 			sql, args, err := s.ToSQL()
 			Expect(err).ToNot(HaveOccurred())
 			Expect(args).To(BeEmpty())

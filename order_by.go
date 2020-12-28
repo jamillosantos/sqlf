@@ -4,7 +4,6 @@ import "strings"
 
 type OrderByClause struct {
 	fields []interface{}
-	parent Select
 }
 
 type orderByDesc struct {
@@ -53,11 +52,6 @@ func (orderBy *OrderByClause) Desc(fields ...interface{}) OrderBy {
 		})
 	}
 	return orderBy
-}
-
-// Select returns the Query that created this instance.
-func (orderBy *OrderByClause) Select() Select {
-	return orderBy.parent
 }
 
 // ToSQL generates the SQL and returns it, alongside its params.

@@ -1,5 +1,6 @@
 package sqlf
 
+// Builder is responsible to build SelectStatements with a default configuration.
 type Builder interface {
 	Placeholder(format PlaceholderFormat) Builder
 	Select(fields ...string) Select

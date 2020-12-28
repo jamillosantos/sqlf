@@ -5,7 +5,6 @@ import "strings"
 type GroupByClause struct {
 	fields []interface{}
 	having []Sqlizer
-	parent Select
 }
 
 // Fields defines the fields that the SQL GROUP BY will group.
@@ -15,20 +14,15 @@ func (groupBy *GroupByClause) Fields(fields ...interface{}) GroupBy {
 }
 
 // Having defines the SQL HAVING clause.
-func (groupBy *GroupByClause) Having(condition string, args ...interface{}) Select {
+func (groupBy *GroupByClause) Having(condition string, args ...interface{}) GroupBy {
 	groupBy.having = []Sqlizer{Condition(condition, args...)}
-	return groupBy.parent
+	return groupBy
 }
 
 // HavingClause defines the SQL HAVING clause.
-func (groupBy *GroupByClause) HavingClause(criteria ...Sqlizer) Select {
+func (groupBy *GroupByClause) HavingClause(criteria ...Sqlizer) GroupBy {
 	groupBy.having = criteria
-	return groupBy.parent
-}
-
-// Select returns the Query that created this instance.
-func (groupBy *GroupByClause) Select() Select {
-	return groupBy.parent
+	return groupBy
 }
 
 // ToSQL generates the SQL and returns it, alongside its params.
