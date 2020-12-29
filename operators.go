@@ -3,11 +3,11 @@ package sqlf
 import "strings"
 
 var (
-	operatorNot          = []byte("NOT ")
-	operatorBracketOpen  = []byte("(")
-	operatorBracketClose = []byte(")")
-	operatorAnd          = []byte(" AND ")
-	operatorOr           = []byte(" OR ")
+	sqlOperatorNot          = []byte("NOT ")
+	sqlOperatorBracketOpen  = []byte("(")
+	sqlOperatorBracketClose = []byte(")")
+	sqlOperatorAnd          = []byte(" AND ")
+	sqlOperatorOr           = []byte(" OR ")
 )
 
 // operator is a generic operator helper that will render a SQL by joining all
@@ -30,7 +30,7 @@ func (c *operator) ToSQL() (string, []interface{}, error) {
 
 // ToSQLFast generates the SQL and returns it, alongside its params.
 func (c *operator) ToSQLFast(sb *strings.Builder, args *[]interface{}) error {
-	sb.Write(operatorBracketOpen)
+	sb.Write(sqlOperatorBracketOpen)
 	for idx, part := range c.parts {
 		if idx > 0 {
 			sb.Write(c.separator)
@@ -40,7 +40,7 @@ func (c *operator) ToSQLFast(sb *strings.Builder, args *[]interface{}) error {
 			return err
 		}
 	}
-	sb.Write(operatorBracketClose)
+	sb.Write(sqlOperatorBracketClose)
 	return nil
 }
 
@@ -48,7 +48,7 @@ func (c *operator) ToSQLFast(sb *strings.Builder, args *[]interface{}) error {
 // between the conditions.
 func And(conditions ...interface{}) Sqlizer {
 	return &operator{
-		separator: operatorAnd,
+		separator: sqlOperatorAnd,
 		parts:     conditions,
 	}
 }
@@ -57,20 +57,35 @@ func And(conditions ...interface{}) Sqlizer {
 // between the conditions.
 func Or(conditions ...interface{}) Sqlizer {
 	return &operator{
-		separator: operatorOr,
+		separator: sqlOperatorOr,
 		parts:     conditions,
 	}
 }
 
+type notOperator struct {
+	condition Sqlizer
+}
+
+// ToSQL generates the SQL and returns it, alongside its params.
+func (not *notOperator) ToSQL() (string, []interface{}, error) {
+	sb := new(strings.Builder)
+	args := make([]interface{}, 0)
+	err := not.ToSQLFast(sb, &args)
+	if err != nil {
+		return "", nil, err
+	}
+	return sb.String(), args, nil
+}
+
+// ToSQLFast generates the SQL and returns it, alongside its params.
+func (not *notOperator) ToSQLFast(sb *strings.Builder, args *[]interface{}) error {
+	sb.Write(sqlOperatorNot)
+	return not.condition.ToSQLFast(sb, args)
+}
+
 // Not negates whatever conditions are passed returning a rendered SQL.
-func Not(conditions ...interface{}) Sqlizer {
-	c := make([]interface{}, 2, len(conditions)+3)
-	c[0] = operatorNot
-	c[1] = operatorBracketOpen
-	c = append(c, conditions...)
-	c = append(c, operatorBracketClose)
-	return &operator{
-		separator: operatorAnd,
-		parts:     c,
+func Not(condition Sqlizer) Sqlizer {
+	return &notOperator{
+		condition: condition,
 	}
 }
