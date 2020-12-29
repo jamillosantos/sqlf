@@ -2,7 +2,7 @@ package sqlf
 
 // Join represents a SQL Join.
 type Join interface {
-	Sqlizer
+	FastSqlizer
 
 	// Type defines the type of the Join. Ex: INNER, LEFT, OUTER, etc.
 	Type(joinType string) Join
@@ -17,7 +17,7 @@ type Join interface {
 	On(condition string, params ...interface{}) Select
 
 	// OnClause define the on criteria based on Sqlizers.
-	OnClause(criteria ...Sqlizer) Select
+	OnClause(criteria ...FastSqlizer) Select
 
 	// Using defines the using directive.
 	Using(fields ...interface{}) Select
@@ -25,7 +25,7 @@ type Join interface {
 
 // GroupBy represents a SQL GROUP BY clause.
 type GroupBy interface {
-	Sqlizer
+	FastSqlizer
 
 	// Fields defines the fields that the SQL GROUP BY will group.
 	Fields(fields ...interface{}) GroupBy
@@ -34,12 +34,12 @@ type GroupBy interface {
 	Having(condition string, params ...interface{}) GroupBy
 
 	// Having defines the SQL HAVING clause.
-	HavingClause(criteria ...Sqlizer) GroupBy
+	HavingClause(criteria ...FastSqlizer) GroupBy
 }
 
 // OrderBy represents a SQL GROUP BY clause.
 type OrderBy interface {
-	Sqlizer
+	FastSqlizer
 
 	// Asc adds fields to the SQL ORDER BY clause on an ascending order.
 	Asc(fields ...interface{}) OrderBy
@@ -50,6 +50,7 @@ type OrderBy interface {
 
 // Select represents a SQL SELECT statement.
 type Select interface {
+	FastSqlizer
 	Sqlizer
 
 	// Select defines the fields that will be returned by the query.
@@ -86,7 +87,7 @@ type Select interface {
 	Where(condition string, args ...interface{}) Select
 
 	// WhereCriteria adds a criteria for the select.
-	WhereCriteria(criteria ...Sqlizer) Select
+	WhereCriteria(criteria ...FastSqlizer) Select
 
 	// GroupBy adds a SQL GROUP BY clause and returns the Query itself. For more options (like HAVING) use `GroupByX`.
 	GroupBy(fields ...interface{}) Select

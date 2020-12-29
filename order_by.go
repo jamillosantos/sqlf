@@ -10,18 +10,7 @@ type orderByDesc struct {
 	value interface{}
 }
 
-// ToSQL generates the SQL and returns it, alongside its params.
-func (desc *orderByDesc) ToSQL() (string, []interface{}, error) {
-	sb := new(strings.Builder)
-	args := make([]interface{}, 0)
-	err := desc.ToSQLFast(sb, &args)
-	if err != nil {
-		return "", nil, err
-	}
-	return sb.String(), args, nil
-}
-
-// ToSQL generates the SQL and returns it, alongside its params.
+// ToSQLFast generates the SQL and returns it, alongside its params.
 func (desc *orderByDesc) ToSQLFast(sb *strings.Builder, args *[]interface{}) error {
 	err := RenderInterfaceAsSQL(sb, args, desc.value)
 	if err != nil {
@@ -52,17 +41,6 @@ func (orderBy *OrderByClause) Desc(fields ...interface{}) OrderBy {
 		})
 	}
 	return orderBy
-}
-
-// ToSQL generates the SQL and returns it, alongside its params.
-func (orderBy *OrderByClause) ToSQL() (string, []interface{}, error) {
-	sb := new(strings.Builder)
-	args := make([]interface{}, 0)
-	err := orderBy.ToSQLFast(sb, &args)
-	if err != nil {
-		return "", nil, err
-	}
-	return sb.String(), args, nil
 }
 
 // ToSQLFast generates the SQL and returns it, alongside its params.

@@ -3,6 +3,7 @@ package sqlf
 // Update describes how a UPDATE will behave into the sqlf.
 type Update interface {
 	Sqlizer
+	FastSqlizer
 
 	// Placeholder defines the placeholder format that should be used for this update statement.
 	Placeholder(placeholder PlaceholderFormat) Update
@@ -26,5 +27,5 @@ type Update interface {
 	// WhereClause appends any Sqlizer to serve as where.
 	//
 	// The conditions added will use the AND operator.
-	WhereClause(conditions ...Sqlizer) Update
+	WhereClause(conditions ...FastSqlizer) Update
 }

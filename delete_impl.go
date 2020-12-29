@@ -11,7 +11,7 @@ type DeleteStatement struct {
 	placeholderFormat PlaceholderFormat
 	cascade           bool
 	from              string
-	where             []Sqlizer
+	where             []FastSqlizer
 	suffix            string
 }
 
@@ -38,7 +38,7 @@ func (d *DeleteStatement) From(tableName string) Delete {
 // The conditions added will use the AND operator.
 func (d *DeleteStatement) Where(condition string, args ...interface{}) Delete {
 	if d.where == nil {
-		d.where = []Sqlizer{
+		d.where = []FastSqlizer{
 			Condition(condition, args...),
 		}
 		return d
@@ -50,7 +50,7 @@ func (d *DeleteStatement) Where(condition string, args ...interface{}) Delete {
 // WhereClause appends any Sqlizer to serve as where.
 //
 // The conditions added will use the AND operator.
-func (d *DeleteStatement) WhereClause(conditions ...Sqlizer) Delete {
+func (d *DeleteStatement) WhereClause(conditions ...FastSqlizer) Delete {
 	if d.where == nil {
 		d.where = conditions
 		return d

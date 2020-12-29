@@ -1,7 +1,6 @@
 package sqlf
 
 import (
-	"fmt"
 	"strings"
 )
 
@@ -11,7 +10,7 @@ type JoinClause struct {
 	joinType string
 	table    string
 	as       string
-	on       []Sqlizer
+	on       []FastSqlizer
 	using    []interface{}
 }
 
@@ -40,12 +39,12 @@ func (join *JoinClause) As(name string) Join {
 
 // On define the on criteria.
 func (join *JoinClause) On(condition string, params ...interface{}) Select {
-	join.on = []Sqlizer{Condition(condition, params...)}
+	join.on = []FastSqlizer{Condition(condition, params...)}
 	return join.parent
 }
 
 // OnClause define the on criteria.
-func (join *JoinClause) OnClause(criteria ...Sqlizer) Select {
+func (join *JoinClause) OnClause(criteria ...FastSqlizer) Select {
 	join.on = criteria
 	return join.parent
 }
@@ -54,17 +53,6 @@ func (join *JoinClause) OnClause(criteria ...Sqlizer) Select {
 func (join *JoinClause) Using(fields ...interface{}) Select {
 	join.using = fields
 	return join.parent
-}
-
-// ToSQL generates the SQL and returns it, alongside its params.
-func (join *JoinClause) ToSQL() (string, []interface{}, error) {
-	sb := new(strings.Builder)
-	args := make([]interface{}, 0, 2)
-	err := join.ToSQLFast(sb, &args)
-	if err != nil {
-		return "", nil, err
-	}
-	return sb.String(), args, nil
 }
 
 // ToSQLFast generates the SQL and returns it, alongside its params.
@@ -90,7 +78,6 @@ func (join *JoinClause) ToSQLFast(sb *strings.Builder, args *[]interface{}) erro
 				sb.Write(sqlConditionAnd)
 			}
 
-			//
 			err := join.ToSQLFast(sb, args)
 			if err != nil {
 				return err
@@ -106,20 +93,9 @@ func (join *JoinClause) ToSQLFast(sb *strings.Builder, args *[]interface{}) erro
 			if idx > 0 {
 				sb.Write(sqlComma)
 			}
-			// Fields are supported as string, fmt.Stringer or `Sqlizer`. This
-			// should provide plenty flexibility a wide use cases.
-			switch f := field.(type) {
-			case string:
-				sb.WriteString(f)
-			case []byte:
-				sb.Write(f)
-			case fmt.Stringer:
-				sb.WriteString(f.String())
-			case Sqlizer:
-				err := f.ToSQLFast(sb, args)
-				if err != nil {
-					return err
-				}
+			err := RenderInterfaceAsSQL(sb, args, field)
+			if err != nil {
+				return err
 			}
 		}
 		sb.Write(sqlBracketClose)

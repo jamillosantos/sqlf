@@ -32,7 +32,7 @@ type SelectStatement struct {
 	distinct          bool
 	fields            []interface{}
 	joins             []Join
-	where             []Sqlizer
+	where             []FastSqlizer
 	groupBy           GroupBy
 	orderBy           OrderBy
 	limit             interface{}
@@ -118,16 +118,16 @@ func (s *SelectStatement) RightJoin(tableName ...string) Join {
 // Where adds a criteria for the select.
 func (s *SelectStatement) Where(condition string, args ...interface{}) Select {
 	if s.where == nil {
-		s.where = make([]Sqlizer, 0, 1)
+		s.where = make([]FastSqlizer, 0, 1)
 	}
 	s.where = append(s.where, Condition(condition, args...))
 	return s
 }
 
 // WhereCriteria adds a criteria for the select.
-func (s *SelectStatement) WhereCriteria(criteria ...Sqlizer) Select {
+func (s *SelectStatement) WhereCriteria(criteria ...FastSqlizer) Select {
 	if s.where == nil {
-		s.where = make([]Sqlizer, 0, len(criteria))
+		s.where = make([]FastSqlizer, 0, len(criteria))
 	}
 	s.where = append(s.where, criteria...)
 	return s

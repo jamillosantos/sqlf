@@ -17,17 +17,6 @@ type operator struct {
 	parts     []interface{}
 }
 
-// ToSQL generates the SQL and returns it, alongside its params.
-func (c *operator) ToSQL() (string, []interface{}, error) {
-	sb := new(strings.Builder)
-	args := make([]interface{}, 0, 2)
-	err := c.ToSQLFast(sb, &args)
-	if err != nil {
-		return "", nil, err
-	}
-	return sb.String(), args, nil
-}
-
 // ToSQLFast generates the SQL and returns it, alongside its params.
 func (c *operator) ToSQLFast(sb *strings.Builder, args *[]interface{}) error {
 	sb.Write(sqlOperatorBracketOpen)
@@ -46,7 +35,7 @@ func (c *operator) ToSQLFast(sb *strings.Builder, args *[]interface{}) error {
 
 // And receive many conditions and generates their SQL with the AND operator
 // between the conditions.
-func And(conditions ...interface{}) Sqlizer {
+func And(conditions ...interface{}) FastSqlizer {
 	return &operator{
 		separator: sqlOperatorAnd,
 		parts:     conditions,
@@ -55,7 +44,7 @@ func And(conditions ...interface{}) Sqlizer {
 
 // Or receive many conditions and generates their SQL with the OR operator
 // between the conditions.
-func Or(conditions ...interface{}) Sqlizer {
+func Or(conditions ...interface{}) FastSqlizer {
 	return &operator{
 		separator: sqlOperatorOr,
 		parts:     conditions,
@@ -63,18 +52,7 @@ func Or(conditions ...interface{}) Sqlizer {
 }
 
 type notOperator struct {
-	condition Sqlizer
-}
-
-// ToSQL generates the SQL and returns it, alongside its params.
-func (not *notOperator) ToSQL() (string, []interface{}, error) {
-	sb := new(strings.Builder)
-	args := make([]interface{}, 0)
-	err := not.ToSQLFast(sb, &args)
-	if err != nil {
-		return "", nil, err
-	}
-	return sb.String(), args, nil
+	condition FastSqlizer
 }
 
 // ToSQLFast generates the SQL and returns it, alongside its params.
@@ -84,7 +62,7 @@ func (not *notOperator) ToSQLFast(sb *strings.Builder, args *[]interface{}) erro
 }
 
 // Not negates whatever conditions are passed returning a rendered SQL.
-func Not(condition Sqlizer) Sqlizer {
+func Not(condition FastSqlizer) FastSqlizer {
 	return &notOperator{
 		condition: condition,
 	}

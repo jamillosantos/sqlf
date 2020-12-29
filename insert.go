@@ -3,7 +3,7 @@ package sqlf
 type InsertUpdate interface {
 	Set(fieldsAndValues ...interface{}) InsertUpdate
 	Where(condition string, args ...interface{}) InsertUpdate
-	WhereClause(conditions ...Sqlizer) InsertUpdate
+	WhereClause(conditions ...FastSqlizer) InsertUpdate
 }
 
 // InsertConflict describes the conflict statement for insertion.
@@ -16,6 +16,7 @@ type InsertConflict interface {
 // Insert describes how a insert will behave into the sqlf.
 type Insert interface {
 	Sqlizer
+	FastSqlizer
 
 	// Placeholder defines the placeholder format that should be used for this insert statement.
 	Placeholder(placeholder PlaceholderFormat) Insert

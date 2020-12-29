@@ -18,7 +18,7 @@ func RenderInterfaceAsSQL(sb *strings.Builder, args *[]interface{}, element inte
 		sb.WriteString(p.String())
 	case []byte:
 		sb.Write(p)
-	case Sqlizer:
+	case FastSqlizer:
 		err := p.ToSQLFast(sb, args)
 		if err != nil {
 			return err
@@ -35,7 +35,7 @@ func RenderInterfaceAsArg(sb *strings.Builder, args *[]interface{}, element inte
 	switch p := element.(type) {
 	case []byte:
 		sb.Write(p)
-	case Sqlizer:
+	case FastSqlizer:
 		err := p.ToSQLFast(sb, args)
 		if err != nil {
 			return err

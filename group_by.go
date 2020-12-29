@@ -4,7 +4,7 @@ import "strings"
 
 type GroupByClause struct {
 	fields []interface{}
-	having []Sqlizer
+	having []FastSqlizer
 }
 
 // Fields defines the fields that the SQL GROUP BY will group.
@@ -15,25 +15,14 @@ func (groupBy *GroupByClause) Fields(fields ...interface{}) GroupBy {
 
 // Having defines the SQL HAVING clause.
 func (groupBy *GroupByClause) Having(condition string, args ...interface{}) GroupBy {
-	groupBy.having = []Sqlizer{Condition(condition, args...)}
+	groupBy.having = []FastSqlizer{Condition(condition, args...)}
 	return groupBy
 }
 
 // HavingClause defines the SQL HAVING clause.
-func (groupBy *GroupByClause) HavingClause(criteria ...Sqlizer) GroupBy {
+func (groupBy *GroupByClause) HavingClause(criteria ...FastSqlizer) GroupBy {
 	groupBy.having = criteria
 	return groupBy
-}
-
-// ToSQL generates the SQL and returns it, alongside its params.
-func (groupBy *GroupByClause) ToSQL() (string, []interface{}, error) {
-	sb := new(strings.Builder)
-	args := make([]interface{}, 0, 2)
-	err := groupBy.ToSQLFast(sb, &args)
-	if err != nil {
-		return "", nil, err
-	}
-	return sb.String(), args, nil
 }
 
 // ToSQLFast generates the SQL and returns it, alongside its params.

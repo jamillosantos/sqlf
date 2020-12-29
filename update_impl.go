@@ -19,7 +19,7 @@ type UpdateStatement struct {
 	placeholderFormat PlaceholderFormat
 	tableName         string
 	fields            []interface{}
-	where             []Sqlizer
+	where             []FastSqlizer
 }
 
 // Placeholder defines the placeholder format that should be used for this delete statement.
@@ -54,7 +54,7 @@ func (update *UpdateStatement) Set(fieldAndValues ...interface{}) Update {
 // The conditions added will use the AND operator.
 func (update *UpdateStatement) Where(condition string, args ...interface{}) Update {
 	if update.where == nil {
-		update.where = []Sqlizer{
+		update.where = []FastSqlizer{
 			Condition(condition, args...),
 		}
 		return update
@@ -66,7 +66,7 @@ func (update *UpdateStatement) Where(condition string, args ...interface{}) Upda
 // WhereClause appends any Sqlizer to serve as where.
 //
 // The conditions added will use the AND operator.
-func (update *UpdateStatement) WhereClause(conditions ...Sqlizer) Update {
+func (update *UpdateStatement) WhereClause(conditions ...FastSqlizer) Update {
 	if update.where == nil {
 		update.where = conditions
 		return update
