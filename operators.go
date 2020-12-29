@@ -30,17 +30,17 @@ func (c *operator) ToSQL() (string, []interface{}, error) {
 
 // ToSQLFast generates the SQL and returns it, alongside its params.
 func (c *operator) ToSQLFast(sb *strings.Builder, args *[]interface{}) error {
+	sb.Write(operatorBracketOpen)
 	for idx, part := range c.parts {
 		if idx > 0 {
 			sb.Write(c.separator)
 		}
-		sb.Write(operatorBracketOpen)
 		err := RenderInterfaceAsSQL(sb, args, part)
 		if err != nil {
 			return err
 		}
-		sb.Write(operatorBracketClose)
 	}
+	sb.Write(operatorBracketClose)
 	return nil
 }
 

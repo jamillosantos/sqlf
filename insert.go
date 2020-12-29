@@ -1,10 +1,16 @@
 package sqlf
 
+type InsertUpdate interface {
+	Set(fieldsAndValues ...interface{}) InsertUpdate
+	Where(condition string, args ...interface{}) InsertUpdate
+	WhereClause(conditions ...Sqlizer) InsertUpdate
+}
+
 // InsertConflict describes the conflict statement for insertion.
 type InsertConflict interface {
 	Target(target interface{}) InsertConflict
 	DoNothing() InsertConflict
-	Update(callback func(UpdateFields)) InsertConflict
+	Update(callback func(InsertUpdate)) InsertConflict
 }
 
 // Insert describes how a insert will behave into the sqlf.
