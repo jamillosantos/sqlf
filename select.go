@@ -7,12 +7,6 @@ type Join interface {
 	// Type defines the type of the Join. Ex: INNER, LEFT, OUTER, etc.
 	Type(joinType string) Join
 
-	// Table defines the table name.
-	Table(tableName ...string) Join
-
-	// As define the table alias.
-	As(name string) Join
-
 	// On define the on criteria based on a condition.
 	On(condition string, params ...interface{}) Select
 

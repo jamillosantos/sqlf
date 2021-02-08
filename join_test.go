@@ -14,8 +14,8 @@ import (
 var _ = Describe("JoinClause", func() {
 	It("should generate a JOIN with a table name", func() {
 		sb, args := new(strings.Builder), make([]interface{}, 0)
-		join := new(sqlf.JoinClause)
-		err := join.Table("users").ToSQLFast(sb, &args)
+		join := sqlf.NewJoinClause("users")
+		err := join.ToSQLFast(sb, &args)
 		Expect(err).NotTo(HaveOccurred())
 		Expect(args).To(BeEmpty())
 		Expect(sb.String()).To(Equal(" JOIN users"))
@@ -23,8 +23,8 @@ var _ = Describe("JoinClause", func() {
 
 	It("should generate a JOIN with a table name alias", func() {
 		sb, args := new(strings.Builder), make([]interface{}, 0)
-		join := new(sqlf.JoinClause)
-		err := join.Table("users", "u").ToSQLFast(sb, &args)
+		join := sqlf.NewJoinClause("users", "u")
+		err := join.ToSQLFast(sb, &args)
 		Expect(err).NotTo(HaveOccurred())
 		Expect(args).To(BeEmpty())
 		Expect(sb.String()).To(Equal(" JOIN users AS u"))
@@ -32,8 +32,8 @@ var _ = Describe("JoinClause", func() {
 
 	It("should generate a JOIN with a table name alias using the `As` method", func() {
 		sb, args := new(strings.Builder), make([]interface{}, 0)
-		join := new(sqlf.JoinClause)
-		err := join.Table("users").As("u").ToSQLFast(sb, &args)
+		join := sqlf.NewJoinClause("users", "u")
+		err := join.ToSQLFast(sb, &args)
 		Expect(err).NotTo(HaveOccurred())
 		Expect(args).To(BeEmpty())
 		Expect(sb.String()).To(Equal(" JOIN users AS u"))
@@ -41,8 +41,8 @@ var _ = Describe("JoinClause", func() {
 
 	It("should generate a JOIN with a type", func() {
 		sb, args := new(strings.Builder), make([]interface{}, 0)
-		join := new(sqlf.JoinClause)
-		err := join.Type("INNER").Table("users").ToSQLFast(sb, &args)
+		join := sqlf.NewJoinClause("users")
+		err := join.Type("INNER").ToSQLFast(sb, &args)
 		Expect(err).NotTo(HaveOccurred())
 		Expect(args).To(BeEmpty())
 		Expect(sb.String()).To(Equal("INNER JOIN users"))
@@ -50,8 +50,8 @@ var _ = Describe("JoinClause", func() {
 
 	It("should generate a JOIN SQL with ON clause", func() {
 		sb, args := new(strings.Builder), make([]interface{}, 0)
-		join := new(sqlf.JoinClause)
-		join.Table("users").On("u.id = user_id")
+		join := sqlf.NewJoinClause("users")
+		join.On("u.id = user_id")
 		err := join.ToSQLFast(sb, &args)
 		Expect(err).NotTo(HaveOccurred())
 		Expect(args).To(BeEmpty())
@@ -60,8 +60,8 @@ var _ = Describe("JoinClause", func() {
 
 	It("should generate a JOIN SQL with ON clause with multiple conditions", func() {
 		sb, args := new(strings.Builder), make([]interface{}, 0)
-		join := new(sqlf.JoinClause)
-		join.Table("users").OnClause(sqlf.Condition("u.id = user_id"), sqlf.Condition("u.role = ?", "admin"))
+		join := sqlf.NewJoinClause("users")
+		join.OnClause(sqlf.Condition("u.id = user_id"), sqlf.Condition("u.role = ?", "admin"))
 		err := join.ToSQLFast(sb, &args)
 		Expect(err).NotTo(HaveOccurred())
 		Expect(args).To(ConsistOf("admin"))
@@ -70,8 +70,8 @@ var _ = Describe("JoinClause", func() {
 
 	It("should generate a JOIN SQL with ON clause with an errored Sqlizer", func() {
 		sb, args := new(strings.Builder), make([]interface{}, 0)
-		join := new(sqlf.JoinClause)
-		join.Table("users").OnClause(&testingutils.MockerSqlizer{
+		join := sqlf.NewJoinClause("users")
+		join.OnClause(&testingutils.MockerSqlizer{
 			SQL:  "sqlizer1 = ?",
 			Args: []interface{}{1},
 			Err:  errors.New("forced error"),
@@ -84,8 +84,8 @@ var _ = Describe("JoinClause", func() {
 
 	It("should generate a JOIN SQL with USING clause", func() {
 		sb, args := new(strings.Builder), make([]interface{}, 0)
-		join := new(sqlf.JoinClause)
-		join.Table("users").Using("field1", sqlf.Condition("condition1"), []byte("bytes1"), &testingutils.MockStringer{Value: "stringer1"}, &testingutils.MockerSqlizer{SQL: "sqlizer1", Args: []interface{}{1}})
+		join := sqlf.NewJoinClause("users")
+		join.Using("field1", sqlf.Condition("condition1"), []byte("bytes1"), &testingutils.MockStringer{Value: "stringer1"}, &testingutils.MockerSqlizer{SQL: "sqlizer1", Args: []interface{}{1}})
 		err := join.ToSQLFast(sb, &args)
 		Expect(err).NotTo(HaveOccurred())
 		Expect(args).To(ConsistOf(1))
@@ -94,8 +94,8 @@ var _ = Describe("JoinClause", func() {
 
 	It("should generate a JOIN SQL with USING clause with an errored Sqlizer", func() {
 		sb, args := new(strings.Builder), make([]interface{}, 0)
-		join := new(sqlf.JoinClause)
-		join.Table("users").Using(&testingutils.MockerSqlizer{SQL: "sqlizer1", Args: []interface{}{1}, Err: errors.New("forced error")})
+		join := sqlf.NewJoinClause("users")
+		join.Using(&testingutils.MockerSqlizer{SQL: "sqlizer1", Args: []interface{}{1}, Err: errors.New("forced error")})
 		err := join.ToSQLFast(sb, &args)
 		Expect(err).To(HaveOccurred())
 		Expect(err.Error()).To(Equal("forced error"))

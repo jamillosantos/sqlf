@@ -14,26 +14,19 @@ type JoinClause struct {
 	using    []interface{}
 }
 
+func NewJoinClause(table ...string) Join {
+	join := &JoinClause{
+		table: table[0],
+	}
+	if len(table) > 1 {
+		join.as = table[1]
+	}
+	return join
+}
+
 // Type defines the type of the Join. Ex: INNER, LEFT, OUTER, etc.
 func (join *JoinClause) Type(joinType string) Join {
 	join.joinType = joinType
-	return join
-}
-
-// Table defines the table name.
-func (join *JoinClause) Table(tableName ...string) Join {
-	if len(tableName) > 0 {
-		join.table = tableName[0]
-	}
-	if len(tableName) > 1 {
-		join.as = tableName[1]
-	}
-	return join
-}
-
-// As define the table alias.
-func (join *JoinClause) As(name string) Join {
-	join.as = name
 	return join
 }
 

@@ -94,7 +94,7 @@ var _ = Describe("Select", func() {
 	Describe("Joins", func() {
 		It("should generate a SQL with a JOIN", func() {
 			s := new(sqlf.SelectStatement)
-			sql, args, err := s.Select("u.*").From("users").As("u").JoinClause("INNER", "permissions").As("p").On("p.user_id = u.id").ToSQL()
+			sql, args, err := s.Select("u.*").From("users", "u").JoinClause("INNER", "permissions AS p").On("p.user_id = u.id").ToSQL()
 			Expect(err).ToNot(HaveOccurred())
 			Expect(args).To(BeEmpty())
 			Expect(sql).To(Equal("SELECT u.* FROM users AS u INNER JOIN permissions AS p ON p.user_id = u.id"))
@@ -105,8 +105,8 @@ var _ = Describe("Select", func() {
 			sql, args, err := s.
 				Select("u.*").
 				From("users").As("u").
-				JoinClause("INNER", "roles").As("r").On("r.id = u.role_id").
-				JoinClause("INNER", "permissions").As("p").On("p.role_id = r.id AND r.type = ?", "default").
+				JoinClause("INNER", "roles", "r").On("r.id = u.role_id").
+				JoinClause("INNER", "permissions", "p").On("p.role_id = r.id AND r.type = ?", "default").
 				ToSQL()
 			Expect(err).ToNot(HaveOccurred())
 			Expect(args).To(ConsistOf("default"))

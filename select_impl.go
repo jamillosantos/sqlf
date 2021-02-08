@@ -86,7 +86,10 @@ func (s *SelectStatement) JoinClause(joinType string, tableName ...string) Join 
 		join.Type(joinType)
 	}
 	if len(tableName) > 0 {
-		join.Table(tableName...)
+		join.table = tableName[0]
+	}
+	if len(tableName) > 1 {
+		join.as = tableName[1]
 	}
 	if s.joins == nil {
 		s.joins = make([]Join, 0, 1)
