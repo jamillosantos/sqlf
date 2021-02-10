@@ -9,7 +9,7 @@ type Update interface {
 	Placeholder(placeholder PlaceholderFormat) Update
 
 	// Table defines what table will be updated.
-	Table(tableName string) Update
+	Table(tableName ...string) Update
 
 	// Set define what fields will be updated, alongside its values.
 	//

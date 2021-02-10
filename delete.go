@@ -12,7 +12,7 @@ type Delete interface {
 	Cascade() Delete
 
 	// From defines what table will be deleted.
-	From(tableName string) Delete
+	From(tableName ...string) Delete
 
 	// Where appends a condition. If called multiples, the conditions will be appended.
 	//

@@ -66,7 +66,7 @@ func (s *SelectStatement) From(table ...string) Select {
 	if len(table) > 0 {
 		s.table = table[0]
 	}
-	if len(table) > 1 {
+	if len(table) > 1 && table[1] != "" {
 		s.as = table[1]
 	}
 	return s

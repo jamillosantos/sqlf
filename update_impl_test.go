@@ -19,6 +19,22 @@ var _ = Describe("Update", func() {
 		Expect(sql).To(Equal("UPDATE users SET name = ?"))
 	})
 
+	It("should generate a UPDATE with no alias", func() {
+		d := new(sqlf.UpdateStatement)
+		sql, args, err := d.Table("users", "").Set("name", "name1").ToSQL()
+		Expect(err).NotTo(HaveOccurred())
+		Expect(args).To(Equal([]interface{}{"name1"}))
+		Expect(sql).To(Equal("UPDATE users SET name = ?"))
+	})
+
+	It("should generate a UPDATE with alias", func() {
+		d := new(sqlf.UpdateStatement)
+		sql, args, err := d.Table("users", "u").Set("u.name", "name1").ToSQL()
+		Expect(err).NotTo(HaveOccurred())
+		Expect(args).To(Equal([]interface{}{"name1"}))
+		Expect(sql).To(Equal("UPDATE users AS u SET u.name = ?"))
+	})
+
 	It("should generate a UPDATE with multiple fields", func() {
 		d := new(sqlf.UpdateStatement)
 		sql, args, err := d.

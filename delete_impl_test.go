@@ -19,6 +19,22 @@ var _ = Describe("Delete", func() {
 		Expect(sql).To(Equal("DELETE FROM users"))
 	})
 
+	It("should generate a DELETE with no alias", func() {
+		d := new(sqlf.DeleteStatement)
+		sql, args, err := d.From("users", "").ToSQL()
+		Expect(err).NotTo(HaveOccurred())
+		Expect(args).To(BeEmpty())
+		Expect(sql).To(Equal("DELETE FROM users"))
+	})
+
+	It("should generate a DELETE with alias", func() {
+		d := new(sqlf.DeleteStatement)
+		sql, args, err := d.From("users", "u").ToSQL()
+		Expect(err).NotTo(HaveOccurred())
+		Expect(args).To(BeEmpty())
+		Expect(sql).To(Equal("DELETE FROM users AS u"))
+	})
+
 	It("should generate a DELETE CASCADE", func() {
 		d := new(sqlf.DeleteStatement)
 		sql, args, err := d.Cascade().From("users").ToSQL()

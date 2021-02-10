@@ -18,6 +18,7 @@ var (
 type UpdateStatement struct {
 	placeholderFormat PlaceholderFormat
 	tableName         string
+	as                string
 	fields            []interface{}
 	where             []FastSqlizer
 }
@@ -29,8 +30,13 @@ func (update *UpdateStatement) Placeholder(placeholder PlaceholderFormat) Update
 }
 
 // Table defines what table will be deleted.
-func (update *UpdateStatement) Table(tableName string) Update {
-	update.tableName = tableName
+func (update *UpdateStatement) Table(tableName ...string) Update {
+	if len(tableName) > 0 {
+		update.tableName = tableName[0]
+	}
+	if len(tableName) > 1 && tableName[1] != "" {
+		update.as = tableName[1]
+	}
 	return update
 }
 
@@ -98,6 +104,10 @@ func (update *UpdateStatement) ToSQLFast(sb *strings.Builder, args *[]interface{
 	// Writing >> UPDATE <TABLE> SET <<
 	sb.Write(sqlUpdateStatement)
 	sb.WriteString(update.tableName)
+	if update.as != "" {
+		sb.Write(sqlSelectAsClause)
+		sb.WriteString(update.as)
+	}
 	sb.Write(sqlUpdateSetClause)
 
 	// Enforce the key-pair for the set clause.

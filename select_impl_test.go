@@ -27,6 +27,14 @@ var _ = Describe("Select", func() {
 			Expect(sql).To(Equal("SELECT * FROM users AS u"))
 		})
 
+		It("should generate select all fields from a table with no alias", func() {
+			s := new(sqlf.SelectStatement)
+			sql, args, err := s.From("users", "").ToSQL()
+			Expect(err).ToNot(HaveOccurred())
+			Expect(args).To(BeEmpty())
+			Expect(sql).To(Equal("SELECT * FROM users"))
+		})
+
 		It("should generate select all fields from a table with alias using `As` method", func() {
 			s := new(sqlf.SelectStatement)
 			sql, args, err := s.From("users").As("u").ToSQL()

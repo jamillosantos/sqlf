@@ -11,6 +11,7 @@ type DeleteStatement struct {
 	placeholderFormat PlaceholderFormat
 	cascade           bool
 	from              string
+	as                string
 	where             []FastSqlizer
 	suffix            string
 }
@@ -28,8 +29,13 @@ func (d *DeleteStatement) Cascade() Delete {
 }
 
 // From defines what table will be deleted.
-func (d *DeleteStatement) From(tableName string) Delete {
-	d.from = tableName
+func (d *DeleteStatement) From(tableName ...string) Delete {
+	if len(tableName) > 0 {
+		d.from = tableName[0]
+	}
+	if len(tableName) > 1 {
+		d.as = tableName[1]
+	}
 	return d
 }
 
@@ -92,6 +98,10 @@ func (d *DeleteStatement) ToSQLFast(sb *strings.Builder, args *[]interface{}) er
 		sb.Write(sqlDeleteStatement)
 	}
 	sb.WriteString(d.from)
+	if d.as != "" {
+		sb.Write(sqlSelectAsClause)
+		sb.WriteString(d.as)
+	}
 	if len(d.where) > 0 {
 		sb.Write(sqlWhereClause)
 		for idx, condition := range d.where {
