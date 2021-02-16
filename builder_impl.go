@@ -28,9 +28,32 @@ func (b *builder) Insert(into string, fields ...interface{}) Insert {
 	}
 }
 
-func (b *builder) Delete(tableName string) Delete {
+func (b *builder) Delete(tableName ...string) Delete {
+	var t, as string
+	if len(tableName[0]) > 0 {
+		t = tableName[0]
+	}
+	if len(tableName[1]) > 0 {
+		as = tableName[1]
+	}
 	return &DeleteStatement{
 		placeholderFormat: b.placeholder,
-		from:              tableName,
+		from:              t,
+		as:                as,
+	}
+}
+
+func (b *builder) Update(tableName ...string) Update {
+	var t, as string
+	if len(tableName[0]) > 0 {
+		t = tableName[0]
+	}
+	if len(tableName[1]) > 0 {
+		as = tableName[1]
+	}
+	return &UpdateStatement{
+		placeholderFormat: b.placeholder,
+		tableName:         t,
+		as:                as,
 	}
 }
