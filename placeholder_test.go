@@ -1,9 +1,9 @@
 package sqlf_test
 
 import (
+	"github.com/jamillosantos/sqlf"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	"github.com/setare/sqlf"
 )
 
 var _ = Describe("Placeholder", func() {

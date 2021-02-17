@@ -1,4 +1,4 @@
-module github.com/setare/sqlf
+module github.com/jamillosantos/sqlf
 
 go 1.15
 

@@ -6,7 +6,7 @@ import (
 
 	sq "github.com/Masterminds/squirrel"
 	"github.com/elgris/sqrl"
-	"github.com/setare/sqlf"
+	"github.com/jamillosantos/sqlf"
 )
 
 func BenchmarkSQLFSelectCreation(b *testing.B) {

@@ -6,8 +6,8 @@ import (
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 
-	"github.com/setare/sqlf"
-	"github.com/setare/sqlf/testingutils"
+	"github.com/jamillosantos/sqlf"
+	"github.com/jamillosantos/sqlf/testingutils"
 )
 
 var _ = Describe("Delete", func() {

@@ -4,10 +4,10 @@ import (
 	"errors"
 	"strings"
 
+	"github.com/jamillosantos/sqlf"
+	"github.com/jamillosantos/sqlf/testingutils"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	"github.com/setare/sqlf"
-	"github.com/setare/sqlf/testingutils"
 )
 
 var _ = Describe("Operators", func() {
