@@ -1,7 +1,5 @@
 package sqlf
 
-import "strings"
-
 type GroupByClause struct {
 	fields []interface{}
 	having []FastSqlizer
@@ -26,7 +24,7 @@ func (groupBy *GroupByClause) HavingClause(criteria ...FastSqlizer) GroupBy {
 }
 
 // ToSQLFast generates the SQL and returns it, alongside its params.
-func (groupBy *GroupByClause) ToSQLFast(sb *strings.Builder, args *[]interface{}) error {
+func (groupBy *GroupByClause) ToSQLFast(sb SQLWriter, args *[]interface{}) error {
 	sb.Write(sqlSelectGroupByClause)
 	for idx, field := range groupBy.fields {
 		if idx > 0 {

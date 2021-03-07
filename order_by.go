@@ -1,7 +1,5 @@
 package sqlf
 
-import "strings"
-
 type OrderByClause struct {
 	fields []interface{}
 }
@@ -11,7 +9,7 @@ type orderByDesc struct {
 }
 
 // ToSQLFast generates the SQL and returns it, alongside its params.
-func (desc *orderByDesc) ToSQLFast(sb *strings.Builder, args *[]interface{}) error {
+func (desc *orderByDesc) ToSQLFast(sb SQLWriter, args *[]interface{}) error {
 	err := RenderInterfaceAsSQL(sb, args, desc.value)
 	if err != nil {
 		return err
@@ -44,7 +42,7 @@ func (orderBy *OrderByClause) Desc(fields ...interface{}) OrderBy {
 }
 
 // ToSQLFast generates the SQL and returns it, alongside its params.
-func (orderBy *OrderByClause) ToSQLFast(sb *strings.Builder, args *[]interface{}) error {
+func (orderBy *OrderByClause) ToSQLFast(sb SQLWriter, args *[]interface{}) error {
 	sb.Write(sqlSelectOrderByClause)
 	for idx, field := range orderBy.fields {
 		if idx > 0 {

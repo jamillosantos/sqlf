@@ -6,7 +6,7 @@ type Delete interface {
 	FastSqlizer
 
 	// Placeholder defines the placeholder format that should be used for this delete statement.
-	Placeholder(placeholder PlaceholderFormat) Delete
+	Placeholder(placeholder PlaceholderFormatFactory) Delete
 
 	// Cascade enables the CASCADE option.
 	Cascade() Delete

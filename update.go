@@ -6,7 +6,7 @@ type Update interface {
 	FastSqlizer
 
 	// Placeholder defines the placeholder format that should be used for this update statement.
-	Placeholder(placeholder PlaceholderFormat) Update
+	Placeholder(placeholder PlaceholderFormatFactory) Update
 
 	// Table defines what table will be updated.
 	Table(tableName ...string) Update

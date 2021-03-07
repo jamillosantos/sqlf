@@ -8,7 +8,7 @@ var (
 )
 
 type DeleteStatement struct {
-	placeholderFormat PlaceholderFormat
+	placeholderFormat PlaceholderFormatFactory
 	cascade           bool
 	from              string
 	as                string
@@ -17,7 +17,7 @@ type DeleteStatement struct {
 }
 
 // Placeholder defines the placeholder format that should be used for this delete statement.
-func (d *DeleteStatement) Placeholder(placeholder PlaceholderFormat) Delete {
+func (d *DeleteStatement) Placeholder(placeholder PlaceholderFormatFactory) Delete {
 	d.placeholderFormat = placeholder
 	return d
 }
@@ -74,24 +74,21 @@ func (d *DeleteStatement) Suffix(suffix string) Delete {
 
 // ToSQL generates the SQL and returns it, alongside its params.
 func (d *DeleteStatement) ToSQL() (string, []interface{}, error) {
-	sb := new(strings.Builder)
+	var sb SQLWriter = new(strings.Builder)
 	args := make([]interface{}, 0)
 	err := d.ToSQLFast(sb, &args)
 	if err != nil {
 		return "", nil, err
 	}
-	if d.placeholderFormat != nil {
-		sql, err := d.placeholderFormat.Replace(sb.String())
-		if err != nil {
-			return "", nil, err
-		}
-		return sql, args, nil
-	}
 	return sb.String(), args, nil
 }
 
 // ToSQLFast generates the SQL and returns it, alongside its params.
-func (d *DeleteStatement) ToSQLFast(sb *strings.Builder, args *[]interface{}) error {
+func (d *DeleteStatement) ToSQLFast(sb SQLWriter, args *[]interface{}) error {
+	if d.placeholderFormat != nil {
+		sb = d.placeholderFormat.Wrap(sb)
+	}
+
 	if d.cascade {
 		sb.Write(sqlDeleteCascadeStatement)
 	} else {

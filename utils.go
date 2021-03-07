@@ -2,7 +2,6 @@ package sqlf
 
 import (
 	"fmt"
-	"strings"
 )
 
 // RenderInterfaceAsSQL renders the input element into the `sb`(`strings.Builder`)
@@ -10,7 +9,7 @@ import (
 //
 // Sqlizer types are welcome and, if args are present they will be appended to the
 // given `args` pointer.
-func RenderInterfaceAsSQL(sb *strings.Builder, args *[]interface{}, element interface{}) error {
+func RenderInterfaceAsSQL(sb SQLWriter, args *[]interface{}, element interface{}) error {
 	switch p := element.(type) {
 	case string:
 		sb.WriteString(p)
@@ -29,9 +28,9 @@ func RenderInterfaceAsSQL(sb *strings.Builder, args *[]interface{}, element inte
 	return nil
 }
 
-// RenderInterfaceAsArg renders the input element into the `sb`(`strings.Builder`)
+// RenderInterfaceAsArg renders the input element into the `SQLWriter`
 // according with its type considering the input as an argument.
-func RenderInterfaceAsArg(sb *strings.Builder, args *[]interface{}, element interface{}) error {
+func RenderInterfaceAsArg(sb SQLWriter, args *[]interface{}, element interface{}) error {
 	switch p := element.(type) {
 	case []byte:
 		sb.Write(p)

@@ -116,7 +116,7 @@ var _ = Describe("Insert", func() {
 
 	It("should generate a single INSERT INTO with placeholders", func() {
 		insert := new(sqlf.InsertStatement)
-		sql, args, err := insert.Placeholder(sqlf.Dollar).Into("users", "name", "email").Values("Name 1", "email1@email.com").ToSQL()
+		sql, args, err := insert.Placeholder(sqlf.DollarPlaceholder).Into("users", "name", "email").Values("Name 1", "email1@email.com").ToSQL()
 		Expect(err).NotTo(HaveOccurred())
 		Expect(args).To(Equal([]interface{}{"Name 1", "email1@email.com"}))
 		Expect(sql).To(Equal("INSERT INTO users (name, email) VALUES ($1,$2)"))

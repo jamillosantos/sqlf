@@ -104,5 +104,5 @@ type Select interface {
 	// Placeholder defines what placeholder format is going to be used for this query.
 	//
 	// Usually it will be automatically defined by the `Builder`.
-	Placeholder(placeholder PlaceholderFormat) Select
+	Placeholder(placeholder PlaceholderFormatFactory) Select
 }

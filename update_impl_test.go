@@ -148,7 +148,7 @@ var _ = Describe("Update", func() {
 
 	It("should generate a UPDATE with a placeholder", func() {
 		d := new(sqlf.UpdateStatement)
-		sql, args, err := d.Placeholder(sqlf.Dollar).Table("users").Set("name", "name1").ToSQL()
+		sql, args, err := d.Placeholder(sqlf.DollarPlaceholder).Table("users").Set("name", "name1").ToSQL()
 		Expect(err).NotTo(HaveOccurred())
 		Expect(args).To(Equal([]interface{}{"name1"}))
 		Expect(sql).To(Equal("UPDATE users SET name = $1"))

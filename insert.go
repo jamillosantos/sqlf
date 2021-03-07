@@ -19,7 +19,7 @@ type Insert interface {
 	FastSqlizer
 
 	// Placeholder defines the placeholder format that should be used for this insert statement.
-	Placeholder(placeholder PlaceholderFormat) Insert
+	Placeholder(placeholder PlaceholderFormatFactory) Insert
 
 	// Into defines what table the data will be inserted on. `fields` are the same as `Fields` method.
 	Into(tableName string, fields ...interface{}) Insert

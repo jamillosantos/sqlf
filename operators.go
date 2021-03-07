@@ -1,7 +1,5 @@
 package sqlf
 
-import "strings"
-
 var (
 	sqlOperatorNot          = []byte("NOT ")
 	sqlOperatorBracketOpen  = []byte("(")
@@ -18,7 +16,7 @@ type operator struct {
 }
 
 // ToSQLFast generates the SQL and returns it, alongside its params.
-func (c *operator) ToSQLFast(sb *strings.Builder, args *[]interface{}) error {
+func (c *operator) ToSQLFast(sb SQLWriter, args *[]interface{}) error {
 	sb.Write(sqlOperatorBracketOpen)
 	for idx, part := range c.parts {
 		if idx > 0 {
@@ -56,7 +54,7 @@ type notOperator struct {
 }
 
 // ToSQLFast generates the SQL and returns it, alongside its params.
-func (not *notOperator) ToSQLFast(sb *strings.Builder, args *[]interface{}) error {
+func (not *notOperator) ToSQLFast(sb SQLWriter, args *[]interface{}) error {
 	sb.Write(sqlOperatorNot)
 	return not.condition.ToSQLFast(sb, args)
 }

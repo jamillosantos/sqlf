@@ -1,7 +1,7 @@
 package sqlf
 
 type builder struct {
-	placeholder PlaceholderFormat
+	placeholder PlaceholderFormatFactory
 }
 
 // NewBuilder returns a new instance of the default implementation of the `Builder`.
@@ -9,7 +9,7 @@ func NewBuilder() Builder {
 	return &builder{}
 }
 
-func (b *builder) Placeholder(format PlaceholderFormat) Builder {
+func (b *builder) Placeholder(format PlaceholderFormatFactory) Builder {
 	b.placeholder = format
 	return b
 }

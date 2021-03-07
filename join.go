@@ -1,9 +1,5 @@
 package sqlf
 
-import (
-	"strings"
-)
-
 // JoinClause is the default implementation for the Join interface.
 type JoinClause struct {
 	parent   Select
@@ -49,7 +45,7 @@ func (join *JoinClause) Using(fields ...interface{}) Select {
 }
 
 // ToSQLFast generates the SQL and returns it, alongside its params.
-func (join *JoinClause) ToSQLFast(sb *strings.Builder, args *[]interface{}) error {
+func (join *JoinClause) ToSQLFast(sb SQLWriter, args *[]interface{}) error {
 	sb.WriteString(join.joinType)
 	sb.Write(sqlSelectJoinClause)
 	sb.WriteString(join.table)

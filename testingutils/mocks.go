@@ -1,6 +1,6 @@
 package testingutils
 
-import "strings"
+import "github.com/jamillosantos/sqlf"
 
 // MockStringer is a mock `@fmt.Stringer` implementation that returns its `Value`
 // property.
@@ -24,7 +24,7 @@ func (s *MockerSqlizer) ToSQL() (string, []interface{}, error) {
 }
 
 // ToSQLFast generates the SQL and returns it, alongside its params.
-func (s *MockerSqlizer) ToSQLFast(sb *strings.Builder, args *[]interface{}) error {
+func (s *MockerSqlizer) ToSQLFast(sb sqlf.SQLWriter, args *[]interface{}) error {
 	if s.Err != nil {
 		return s.Err
 	}

@@ -16,7 +16,7 @@ var (
 )
 
 type UpdateStatement struct {
-	placeholderFormat PlaceholderFormat
+	placeholderFormat PlaceholderFormatFactory
 	tableName         string
 	as                string
 	fields            []interface{}
@@ -24,7 +24,7 @@ type UpdateStatement struct {
 }
 
 // Placeholder defines the placeholder format that should be used for this delete statement.
-func (update *UpdateStatement) Placeholder(placeholder PlaceholderFormat) Update {
+func (update *UpdateStatement) Placeholder(placeholder PlaceholderFormatFactory) Update {
 	update.placeholderFormat = placeholder
 	return update
 }
@@ -89,18 +89,15 @@ func (update *UpdateStatement) ToSQL() (string, []interface{}, error) {
 	if err != nil {
 		return "", nil, err
 	}
-	if update.placeholderFormat != nil {
-		sql, err := update.placeholderFormat.Replace(sb.String())
-		if err != nil {
-			return "", nil, err
-		}
-		return sql, args, nil
-	}
 	return sb.String(), args, nil
 }
 
 // ToSQLFast generates the SQL and returns it, alongside its params.
-func (update *UpdateStatement) ToSQLFast(sb *strings.Builder, args *[]interface{}) error {
+func (update *UpdateStatement) ToSQLFast(sb SQLWriter, args *[]interface{}) error {
+	if update.placeholderFormat != nil {
+		sb = update.placeholderFormat.Wrap(sb)
+	}
+
 	// Writing >> UPDATE <TABLE> SET <<
 	sb.Write(sqlUpdateStatement)
 	sb.WriteString(update.tableName)

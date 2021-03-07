@@ -21,7 +21,7 @@ var (
 
 // InsertStatement is the default implementation of the `Insert` interface.
 type InsertStatement struct {
-	placeholderFormat PlaceholderFormat
+	placeholderFormat PlaceholderFormatFactory
 	tableName         string
 	fields            []interface{}
 	values            []interface{}
@@ -32,7 +32,7 @@ type InsertStatement struct {
 }
 
 // Placeholder defines the placeholder format that should be used for this insert statement.
-func (insert *InsertStatement) Placeholder(placeholder PlaceholderFormat) Insert {
+func (insert *InsertStatement) Placeholder(placeholder PlaceholderFormatFactory) Insert {
 	insert.placeholderFormat = placeholder
 	return insert
 }
@@ -127,18 +127,14 @@ func (insert *InsertStatement) ToSQL() (string, []interface{}, error) {
 	if err != nil {
 		return "", nil, err
 	}
-	if insert.placeholderFormat != nil {
-		sql, err := insert.placeholderFormat.Replace(sb.String())
-		if err != nil {
-			return "", nil, err
-		}
-		return sql, args, nil
-	}
 	return sb.String(), args, nil
 }
 
 // ToSQLFast generates the SQL and returns it, alongside its params.
-func (insert *InsertStatement) ToSQLFast(sb *strings.Builder, args *[]interface{}) error {
+func (insert *InsertStatement) ToSQLFast(sb SQLWriter, args *[]interface{}) error {
+	if insert.placeholderFormat != nil {
+		sb = insert.placeholderFormat.Wrap(sb)
+	}
 	lenFields := len(insert.fields)
 	// if the selectStatement is not defined AND if the values count is multiple of the fields count.
 	if insert.selectStatement == nil && len(insert.values)%lenFields != 0 {

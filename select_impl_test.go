@@ -399,7 +399,7 @@ var _ = Describe("Select", func() {
 	Describe("Placeholder", func() {
 		It("should generate a SELECT with sequential placeholders", func() {
 			s := new(sqlf.SelectStatement)
-			sql, args, err := s.Placeholder(sqlf.Dollar).From("users").Where("id = ?", 1).ToSQL()
+			sql, args, err := s.Placeholder(sqlf.DollarPlaceholder).From("users").Where("id = ?", 1).ToSQL()
 			Expect(err).ToNot(HaveOccurred())
 			Expect(args).To(Equal([]interface{}{1}))
 			Expect(sql).To(Equal("SELECT * FROM users WHERE id = $1"))

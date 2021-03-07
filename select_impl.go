@@ -37,7 +37,7 @@ type SelectStatement struct {
 	orderBy           OrderBy
 	limit             interface{}
 	offset            interface{}
-	placeholderFormat PlaceholderFormat
+	placeholderFormat PlaceholderFormatFactory
 }
 
 // Select defines the fields that will be returned by the query.
@@ -193,31 +193,28 @@ func (s *SelectStatement) Offset(offset interface{}) Select {
 // Placeholder defines what placeholder format is going to be used for this query.
 //
 // Usually it will be automatically defined by the `Builder`.
-func (s *SelectStatement) Placeholder(placeholder PlaceholderFormat) Select {
+func (s *SelectStatement) Placeholder(placeholder PlaceholderFormatFactory) Select {
 	s.placeholderFormat = placeholder
 	return s
 }
 
 // ToSQL generates the SQL and returns it, alongside its params.
 func (s *SelectStatement) ToSQL() (string, []interface{}, error) {
-	sb := new(strings.Builder)
+	var sb SQLWriter = new(strings.Builder)
 	args := make([]interface{}, 0)
 	err := s.ToSQLFast(sb, &args)
 	if err != nil {
 		return "", nil, err
 	}
-	if s.placeholderFormat != nil {
-		sql, err := s.placeholderFormat.Replace(sb.String())
-		if err != nil {
-			return "", nil, err
-		}
-		return sql, args, nil
-	}
 	return sb.String(), args, nil
 }
 
 // ToSQLFast generates the SQL and returns it, alongside its params.
-func (s *SelectStatement) ToSQLFast(sb *strings.Builder, args *[]interface{}) error {
+func (s *SelectStatement) ToSQLFast(sb SQLWriter, args *[]interface{}) error {
+	if s.placeholderFormat != nil {
+		sb = s.placeholderFormat.Wrap(sb)
+	}
+
 	sb.Write(sqlSelectClause)
 	if s.distinct {
 		sb.Write(sqlSelectDistinctClause)

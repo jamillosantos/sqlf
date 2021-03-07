@@ -2,6 +2,7 @@ package sqlf_test
 
 import (
 	"fmt"
+	"strings"
 	"testing"
 
 	sq "github.com/Masterminds/squirrel"
@@ -83,13 +84,16 @@ func BenchmarkSqrlSelectSQLGeneration(b *testing.B) {
 var sqlForPlaceholder = "SELECT * FROM users WHERE account_id = ? AND name LIKE ?"
 
 func BenchmarkSQLFDollarPlaceholder(b *testing.B) {
+	sb := &strings.Builder{}
+	ph := sqlf.DollarPlaceholder.Wrap(sb)
 	for i := 0; i < b.N; i++ {
-		_, err := sqlf.Dollar.Replace(sqlForPlaceholder)
+		_, err := ph.WriteString(sqlForPlaceholder)
 		if err != nil {
 			fmt.Println(err)
 			b.Fail()
 			return
 		}
+		sb.Reset()
 	}
 }
 

@@ -93,7 +93,7 @@ var _ = Describe("Delete", func() {
 
 	It("should generate a DELETE with placeholders", func() {
 		d := new(sqlf.DeleteStatement)
-		sql, args, err := d.Placeholder(sqlf.Dollar).From("users").Where("id = ?", 1).ToSQL()
+		sql, args, err := d.Placeholder(sqlf.DollarPlaceholder).From("users").Where("id = ?", 1).ToSQL()
 		Expect(err).NotTo(HaveOccurred())
 		Expect(args).To(Equal([]interface{}{1}))
 		Expect(sql).To(Equal("DELETE FROM users WHERE id = $1"))
