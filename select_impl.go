@@ -198,6 +198,20 @@ func (s *SelectStatement) Placeholder(placeholder PlaceholderFormatFactory) Sele
 	return s
 }
 
+// CountQuery copies the current `Select` replacing all fields by `count`. If no `count` is given, it uses
+// `COUNT(*)` as default.g
+//
+// The returned `Select` also has their `Limit` and `Offset` reset to none.
+func (s *SelectStatement) CountQuery(count ...interface{}) Select {
+	countQ := *s
+	if len(count) == 0 {
+		countQ.Select("COUNT(*)")
+	} else {
+		countQ.Select(count...)
+	}
+	return countQ.Limit()
+}
+
 // ToSQL generates the SQL and returns it, alongside its params.
 func (s *SelectStatement) ToSQL() (string, []interface{}, error) {
 	var sb SQLWriter = new(strings.Builder)

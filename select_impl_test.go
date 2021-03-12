@@ -405,4 +405,36 @@ var _ = Describe("Select", func() {
 			Expect(sql).To(Equal("SELECT * FROM users WHERE id = $1"))
 		})
 	})
+
+	Describe("CountQuery", func() {
+		It("should generate a count query", func() {
+			s := new(sqlf.SelectStatement).Select("name", "email").From("users")
+
+			sCount := s.CountQuery()
+			sqlCount, argsCount, errCount := sCount.ToSQL()
+			Expect(errCount).ToNot(HaveOccurred())
+			Expect(argsCount).To(BeEmpty())
+			Expect(sqlCount).To(Equal("SELECT COUNT(*) FROM users"))
+
+			sql, args, err := s.ToSQL()
+			Expect(err).ToNot(HaveOccurred())
+			Expect(args).To(BeEmpty())
+			Expect(sql).To(Equal("SELECT name, email FROM users"))
+		})
+
+		It("should generate a count query", func() {
+			s := new(sqlf.SelectStatement).Select("name", "email").From("users")
+
+			sCount := s.CountQuery("DISTINCT COUNT(*)")
+			sqlCount, argsCount, errCount := sCount.ToSQL()
+			Expect(errCount).ToNot(HaveOccurred())
+			Expect(argsCount).To(BeEmpty())
+			Expect(sqlCount).To(Equal("SELECT DISTINCT COUNT(*) FROM users"))
+
+			sql, args, err := s.ToSQL()
+			Expect(err).ToNot(HaveOccurred())
+			Expect(args).To(BeEmpty())
+			Expect(sql).To(Equal("SELECT name, email FROM users"))
+		})
+	})
 })

@@ -105,4 +105,10 @@ type Select interface {
 	//
 	// Usually it will be automatically defined by the `Builder`.
 	Placeholder(placeholder PlaceholderFormatFactory) Select
+
+	// CountQuery copies the current `Select` replacing all fields by `count`. If no `count` is given, it uses
+	// `COUNT(*)` as default.
+	//
+	// The returned `Select` also has their `Limit` and `Offset` reset to none.
+	CountQuery(count ...interface{}) Select
 }
